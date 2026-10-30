@@ -25,6 +25,9 @@ fn vec_map(v: &Vec<i32>) -> Vec<i32> {
         // Vec, you can just return the new number!
         element * 2
     }).collect()
+    //iter()：逐个读取
+    //map()：规定每个元素怎么转换
+    //collect()：收集结果
 }
 
 #[cfg(test)]

@@ -2,7 +2,6 @@
 	single linked list merge
 	This problem requires you to merge two ordered singly linked lists into one ordered singly linked list
 */
-// I AM NOT DONE
 
 use std::fmt::{self, Display, Formatter};
 use std::ptr::NonNull;
@@ -69,14 +68,91 @@ impl<T> LinkedList<T> {
             },
         }
     }
-	pub fn merge(list_a:LinkedList<T>,list_b:LinkedList<T>) -> Self
-	{
-		//TODO
-		Self {
-            length: 0,
-            start: None,
-            end: None,
+    pub fn merge(list_a: LinkedList<T>, list_b: LinkedList<T>) -> Self
+    where
+        T: Ord,
+    {
+        // 将一个已有节点接到结果链表的末尾。
+        fn append_node<T>(list: &mut LinkedList<T>, mut node: NonNull<Node<T>>) {
+            // 节点来自输入链表，指针有效；断开旧的 next 后再接入结果。
+            unsafe {
+                node.as_mut().next = None;
+                match list.end {
+                    Some(mut end) => end.as_mut().next = Some(node),
+                    None => list.start = Some(node),
+                }
+            }
+            list.end = Some(node);
+            list.length += 1;
         }
+
+        // 从两个链表的头节点开始遍历。
+        let mut a = list_a.start;
+        let mut b = list_b.start;
+
+        // 2. 创建结果链表
+        let mut result = Self::new();
+
+        while let(Some(pa),Some(pb)) =(a,b){
+            let take_a = unsafe {
+                pa.as_ref().val <= pb.as_ref().val
+            };
+            if take_a {
+
+                // A 当前节点比较小
+
+                // 先记录 A 的下一个节点
+                a = unsafe {
+                    pa.as_ref().next
+                };
+
+                // 再把 A 当前节点连接到 result 尾部
+                append_node(&mut result, pa);
+
+            } else {
+
+                // B 当前节点比较小
+
+                // 先记录 B 的下一个节点
+                b = unsafe {
+                    pb.as_ref().next
+                };
+
+                // 再把 B 当前节点连接到 result 尾部
+                append_node(&mut result, pb);
+            }
+        }
+        //处理剩余
+        // 如果链表 A 还有剩余节点
+        while let Some(pa) = a {
+
+            // 保存 A 的下一个节点
+            a = unsafe {
+                pa.as_ref().next
+            };
+
+            // 将当前节点连接到结果链表
+            append_node(&mut result, pa);
+        }
+
+        // 如果链表 B 还有剩余节点
+        while let Some(pb) = b {
+
+            // 保存 B 的下一个节点
+            b = unsafe {
+                pb.as_ref().next
+            };
+
+            // 将当前节点连接到结果链表
+            append_node(&mut result, pb);
+        }
+
+        // ---------------------------------------------
+        // 第四步：返回合并后的链表
+        // ---------------------------------------------
+
+        result
+
 	}
 }
 

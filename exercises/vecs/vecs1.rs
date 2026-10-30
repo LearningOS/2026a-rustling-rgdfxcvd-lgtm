@@ -11,6 +11,9 @@
 fn array_and_vec() -> ([i32; 4], Vec<i32>) {
     let a = [10, 20, 30, 40]; // a plain array
     let v = vec![10, 20, 30, 40];// TODO: declare your vector here with the macro for vectors
+    //调用宏 ！ 或者用 
+    //let v = Vec::new();
+    //v.push(10);…… 这样子创建也是可以的
 
     (a, v)
 }
